@@ -85,7 +85,7 @@
         </div>
         <div class="line"></div>
         <div class="footer">
-            <p>Link Kritik dan Saran:<br></p>
+            <p>Link Kritik dan Saran:<br> https://github.com/NalindraDT</p>
         </div>
     </div>
 </body>
