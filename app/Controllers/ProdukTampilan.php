@@ -25,7 +25,7 @@ class ProdukTampilan extends BaseController
     public function tambah()
     {
         // Metode ini yang akan merender halaman form tambah produk
-        return view('produk_view_form');
+        return view('produk/produk_view_form');
     }
 
     public function simpan()

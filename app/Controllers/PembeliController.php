@@ -68,7 +68,7 @@ class PembeliController extends BaseController
 
             $this->pembeliModel->delete($id_pembeli);
             
-            session()->setFlashdata('message', 'Produk berhasil dihapus dari keranjang!');
+            session()->setFlashdata('message', 'Produk berhasil direfund');
         } else {
             session()->setFlashdata('error', 'Item keranjang tidak ditemukan.');
         }

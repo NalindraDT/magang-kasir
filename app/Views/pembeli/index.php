@@ -72,7 +72,7 @@
                             <td class="px-6 py-4">Rp <?= number_format($item['harga'], 0, ',', '.') ?></td>
                             <td class="px-6 py-4">Rp <?= number_format($item['total_harga'], 0, ',', '.') ?></td>
                             <td class="px-6 py-4">
-                                <a href="<?= base_url('pembeli/removeFromCart/' . $item['id_pembeli']) ?>" class="font-medium text-red-600 dark:text-red-500 hover:underline">Hapus</a>
+                                <a href="<?= base_url('pembeli/removeFromCart/' . $item['id_pembeli']) ?>" class="font-medium text-red-600 dark:text-red-500 hover:underline">Refund</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -83,7 +83,7 @@
     
     <!-- Tombol Cetak Nota -->
     <?php if (!empty($keranjang)): ?>
-        <div class="mt-6 text-center">
+        <div class="mt-6 text-right">
             <a href="<?= base_url('pembeli/cetakNota') ?>" target="_blank" class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
                 Cetak Nota
             </a>
