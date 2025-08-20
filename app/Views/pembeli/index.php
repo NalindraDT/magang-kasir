@@ -20,16 +20,16 @@
             <div class="col-span-full text-center text-gray-500 dark:text-gray-400">Tidak ada produk yang tersedia.</div>
         <?php else: ?>
             <?php foreach ($produks as $produk): ?>
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 flex flex-col justify-between">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 flex flex-col justify-between" data-nama-produk="<?= $produk['nama_produk'] ?>">
                     <div>
                         <h5 class="text-xl font-bold tracking-tight text-gray-900 dark:text-white mb-2"><?= $produk['nama_produk'] ?></h5>
                         <p class="font-normal text-gray-700 dark:text-gray-400">Harga: Rp <?= number_format($produk['harga'], 0, ',', '.') ?></p>
                         <p class="font-normal text-gray-700 dark:text-gray-400">Stok: <?= $produk['stok'] ?></p>
                     </div>
-                    <form action="<?= base_url('pembeli/beli') ?>" method="post" class="mt-4">
+                    <form id="form-<?= $produk['id_produk'] ?>" action="<?= base_url('pembeli/beli') ?>" method="post" class="mt-4" onsubmit="return konfirmasiPembelian(event, <?= $produk['id_produk'] ?>)">
                         <input type="hidden" name="id_produk" value="<?= $produk['id_produk'] ?>">
                         <div class="flex items-center space-x-2">
-                            <input type="number" name="kuantitas" value="1" min="1" max="<?= $produk['stok'] ?>" class="w-20 px-3 py-2 text-center text-gray-900 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            <input type="number" name="kuantitas" value="1" min="1" max="<?= $produk['stok'] ?>" class="kuantitas-input w-20 px-3 py-2 text-center text-gray-900 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                             <button type="submit" class="flex-grow text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                                 Beli
                             </button>
@@ -39,7 +39,7 @@
             <?php endforeach; ?>
         <?php endif; ?>
     </div>
-    
+
     <hr class="my-8 border-gray-300 dark:border-gray-700">
 
     <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">Keranjang Belanja</h2>
@@ -68,11 +68,15 @@
                             <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"><?= $item['id_pembeli'] ?></td>
                             <td class="px-6 py-4"><?= $item['id_produk'] ?></td>
                             <td class="px-6 py-4"><?= $item['nama_produk'] ?></td>
-                            <td class="px-6 py-4"><?= $item['stok'] ?></td>
+                            <td class="px-6 py-4">
+                                <form id="update-form-<?= $item['id_pembeli'] ?>" action="<?= base_url('pembeli/updateCart/' . $item['id_pembeli']) ?>" method="post">
+                                    <input type="number" name="stok" value="<?= $item['stok'] ?>" min="1" max="<?= $produk['stok'] ?>" class="update-kuantitas-input w-20 px-3 py-2 text-center text-gray-900 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" onchange="this.form.submit()">
+                                </form>
+                            </td>
                             <td class="px-6 py-4">Rp <?= number_format($item['harga'], 0, ',', '.') ?></td>
                             <td class="px-6 py-4">Rp <?= number_format($item['total_harga'], 0, ',', '.') ?></td>
                             <td class="px-6 py-4">
-                                <a href="<?= base_url('pembeli/removeFromCart/' . $item['id_pembeli']) ?>" class="font-medium text-red-600 dark:text-red-500 hover:underline">Refund</a>
+                                <a href="#" onclick="konfirmasiHapus(event, <?= $item['id_pembeli'] ?>)" class="font-medium text-red-600 dark:text-red-500 hover:underline">Hapus</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -80,7 +84,7 @@
             </tbody>
         </table>
     </div>
-    
+
     <!-- Tombol Cetak Nota -->
     <?php if (!empty($keranjang)): ?>
         <div class="mt-6 text-right">
@@ -90,4 +94,34 @@
         </div>
     <?php endif; ?>
 </main>
+<?= $this->endSection() ?>
+
+<?= $this->section('scripts') ?>
+<script>
+    function konfirmasiPembelian(event, idProduk) {
+        const form = document.getElementById('form-' + idProduk);
+        const namaProduk = form.closest('[data-nama-produk]').dataset.namaProduk;
+        const kuantitas = form.querySelector('.kuantitas-input').value;
+
+        if (kuantitas <= 0) {
+            alert('Jumlah produk harus lebih dari 0.');
+            event.preventDefault();
+            return false;
+        }
+
+        if (confirm(`Apakah Anda ingin membeli produk ${namaProduk} dengan jumlah ${kuantitas}?`)) {
+            return true;
+        } else {
+            event.preventDefault();
+            return false;
+        }
+    }
+
+    function konfirmasiHapus(event, id) {
+        if (confirm('Apakah Anda yakin ingin menghapus item ini dari keranjang?')) {
+            window.location.href = `<?= base_url('pembeli/removeFromCart/') ?>${id}`;
+        }
+        event.preventDefault();
+    }
+</script>
 <?= $this->endSection() ?>

@@ -65,7 +65,7 @@ class ProdukTampilan extends BaseController
             throw new \CodeIgniter\Exceptions\PageNotFoundException('Produk tidak ditemukan.');
         }
 
-        return view('produk_view_form', $data);
+        return view('produk/produk_view_form', $data);
     }
 
     public function update()

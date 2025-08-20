@@ -15,6 +15,7 @@ $routes->get('pembeli', 'PembeliController::index');
 $routes->post('pembeli/beli', 'PembeliController::beli');
 $routes->get('pembeli/removeFromCart/(:num)', 'PembeliController::removeFromCart/$1');
 $routes->get('pembeli/cetakNota', 'PembeliController::cetakNota');
+$routes->post('pembeli/updateCart/(:num)', 'PembeliController::updateCart/$1'); // Rute baru
 
 // --- Rute untuk Halaman Web CRUD Produk ---
 $routes->get('produk', 'ProdukTampilan::index');

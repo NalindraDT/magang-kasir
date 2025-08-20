@@ -68,7 +68,7 @@ class PembeliController extends BaseController
 
             $this->pembeliModel->delete($id_pembeli);
             
-            session()->setFlashdata('message', 'Produk berhasil direfund');
+            session()->setFlashdata('message', 'Produk berhasil dihapus dari keranjang!');
         } else {
             session()->setFlashdata('error', 'Item keranjang tidak ditemukan.');
         }
@@ -80,5 +80,47 @@ class PembeliController extends BaseController
     {
         $data['keranjang'] = $this->pembeliModel->findAll();
         return view('pembeli/nota', $data);
+    }
+    
+    public function updateCart($id_pembeli)
+    {
+        $newStok = $this->request->getPost('stok');
+
+        // Ambil data item keranjang yang lama
+        $itemLama = $this->pembeliModel->find($id_pembeli);
+
+        if (!$itemLama) {
+            session()->setFlashdata('error', 'Item keranjang tidak ditemukan.');
+            return redirect()->to(base_url('pembeli'));
+        }
+
+        // Ambil data produk terkait
+        $produk = $this->produkModel->find($itemLama['id_produk']);
+
+        if (!$produk) {
+            session()->setFlashdata('error', 'Produk tidak ditemukan.');
+            return redirect()->to(base_url('pembeli'));
+        }
+
+        // Hitung selisih stok
+        $stokTabelProduk = $produk['stok'] + $itemLama['stok'] - $newStok;
+
+        if ($stokTabelProduk < 0) {
+            session()->setFlashdata('error', 'Stok tidak mencukupi.');
+            return redirect()->to(base_url('pembeli'));
+        }
+
+        // Perbarui data di tabel pembeli
+        $data_update = [
+            'stok' => $newStok,
+            'total_harga' => $newStok * $itemLama['harga']
+        ];
+        $this->pembeliModel->update($id_pembeli, $data_update);
+
+        // Perbarui stok di tabel produk
+        $this->produkModel->update($produk['id_produk'], ['stok' => $stokTabelProduk]);
+
+        session()->setFlashdata('message', 'Keranjang berhasil diupdate!');
+        return redirect()->to(base_url('pembeli'));
     }
 }
